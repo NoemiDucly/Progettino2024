@@ -31,23 +31,23 @@ public:
 
     /*Boid(double x, double y) : position{x, y}, velocity{0, 0} {}*/
 private:
-    Vec2 calculateCohesion(int boidIndex, const std::vector<Boid>& boids) {
-    Vec2 centerOfMass(0, 0);
-    int count = 0;
+    Vec2 calculateCohesion(const std::vector<Boid>& boids, float cohesionFactor) {
+        Vec2 centerOfMass(0, 0);
+        int count = 0;
 
-    for (int j = 0; j < boids.size(); j++) {
-        if (j != boidIndex) {  // Evita di considerare il boid stesso
-            centerOfMass += boids[j].position;
-            count++;
+        for (const auto& boid : boids) {
+            if (&boid != this) {  // Confronta l'indirizzo dell'oggetto
+                centerOfMass += boid.position;
+                count++;
+            }
         }
-    }
 
-    if (count > 0) {
-        centerOfMass = centerOfMass / count;  // Calcola il centro di massa
-    }
+   if (count > 0) {
+            centerOfMass = centerOfMass / count;  // Calcola il centro di massa
+        }
 
-    Vec2 cohesionVelocity = (centerOfMass - boids[boidIndex].position) * cohesionFactor;
-    return cohesionVelocity;
-}
+        Vec2 cohesionVelocity = (centerOfMass - this->position) * cohesionFactor;
+        return cohesionVelocity;
+    }
 }
 }
