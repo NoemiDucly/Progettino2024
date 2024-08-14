@@ -93,24 +93,31 @@ Vec2 Boid::alignment(const std::vector<Boid>& boids, double a) {
   return steer;
 };
 
-Vec2 Boid::cohesion(const std::vector<Boid>& boids, float cohesionFactor) {
-  Vec2 centerOfMass(0, 0);
-  int count = 0;
+Vec2 Boid::calculateCohesion(const std::vector<Boid>& boids, double cohesionFactor) {
+    Vec2 centerOfMass(0, 0);
+    int count = 0;
 
-  for (const auto& boid : boids) {
-    if (&boid != this) {  // Confronta l'indirizzo dell'oggetto
-      centerOfMass += boid.position_;
-      count++;
+    // Ottieni i vicini entro il raggio di percezione
+    auto neighbors = getNeighbors(boids);
+
+    // Calcola il centro di massa dei vicini
+    for (const Boid& neighbor : neighbors) {
+        centerOfMass += neighbor.position_;
+        count++;
     }
-  }
+  //Una volta ottenuti i vicini, viene calcolato il centro di massa sommando le posizioni di tutti i vicini 
+  //e dividendo per il loro numero
 
-  if (count > 0) {
-    centerOfMass = centerOfMass / count;  // Calcola il centro di massa
-  }
+    if (count > 0) {
+        centerOfMass = centerOfMass / count;  // Calcola il centro di massa
+        // Calcola la velocità di coesione
+        Vec2 cohesionVelocity = (centerOfMass - position_) * cohesionFactor;
+        return cohesionVelocity;
+    } else {
+        return Vec2(0, 0);  // Nessun vicino, nessuna coesione
+    };
 
-  Vec2 cohesionVelocity = (centerOfMass - this->position_) * cohesionFactor;
-  return cohesionVelocity;
-}
+
 
 void Boid::update(const std::vector<Boid>& v, double a) {
   Vec2 ali = alignment(v, 0.6);
