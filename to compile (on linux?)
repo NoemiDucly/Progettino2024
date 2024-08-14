@@ -1,0 +1,1 @@
+g++ -std=c++11 -o boids main.cpp boids.cpp flock.cpp -lsfml-graphics -lsfml-window -lsfml-system
