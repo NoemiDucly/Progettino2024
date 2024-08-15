@@ -10,6 +10,10 @@ public:
 
     void move() {
         position_ += velocity_;
-        // Aggiungi un codice qui per limitare la posizione all'interno della finestra
+    if (position_.x < 0) position_.x = 800;
+    if (position_.x > 800) position_.x = 0;
+    if (position_.y < 0) position_.y = 600;
+    if (position_.y > 600) position_.y = 0; //limitare i movimenti nella finestra 
     }
 };
+
