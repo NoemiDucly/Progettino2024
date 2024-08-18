@@ -139,20 +139,21 @@ Vec2 Boid::calculateCohesion(const std::vector<Boid>& boids, double cohesionFact
         return Vec2(0, 0);  // Nessun vicino, nessuna coesione
     };
 
-Vec2 Boid::avoidance(const Boid& predator, double dangerRadius) {
+Vec2 Boid::avoidance(const Predator& predator, double dangerRadius) {
     Vec2 avoidanceForce(0, 0);
     
-    Vec2 difference = position_ - predator.position_; //vettore che unisce pos predatore e pos boid
-    double distance = difference.lenght();
+    double distance = position_.distance(predator.position_);  // Usa la funzione distance
 
     // Se il predatore è entro il raggio di pericolo
     if (distance < dangerRadius) {
+        Vec2 difference = position_ - predator.position_;  // Vettore che unisce pos predatore e pos boid
         // Aumenta la forza di repulsione se il predatore è vicino
         avoidanceForce = difference / (distance * distance);
     }
 
     return avoidanceForce;
 }
+
 
 
 void Boid::update(const std::vector<Boid>& v, double a,const Predator& p) {
