@@ -41,12 +41,12 @@ TEST_CASE("Testing Vec2::distance") {
     CHECK (v9.distance(v10)== doctest::Approx(std::sqrt(37.0)));
 }
 TEST_CASE("Testing the function alignment") {
-    SUBCASE("Testing alignmentFactor = 0.0") {
-        boids::double alignmentFactor = 0.0;
-        boids::Boid centralBoid(0, 0, Vec2(1, 1));
-        boids::Boid neighbor1(1, 1, Vec2(2, 2));
-        boids::Boid neighbor2(2, 2, Vec2(3, 3));
-        boids::std::vector<Boid> boids = { centralBoid, neighbor1, neighbor2 };
+  SUBCASE("Testing alignmentFactor = 0.0") {
+        double alignmentFactor = 0.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(1, 1), boids::Vec2(2, 2));
+        boids::Boid neighbor2(boids::Vec2(2, 2), boids::Vec2(3, 3));
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
 
         boids::Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
 
@@ -54,75 +54,192 @@ TEST_CASE("Testing the function alignment") {
         CHECK(alignmentResult.x_ == doctest::Approx(0));
         CHECK(alignmentResult.y_ == doctest::Approx(0));
     }
- SUBCASE("Testing alignmentFactor = 0.5") {
-        // Boid centrale con vicini e alignmentFactor = 0.5
-        double alignmentFactor = 0.5;
-        Boid centralBoid(0, 0, Vec2(1, 1));
-        Boid neighbor1(1, 1, Vec2(2, 2));
-        Boid neighbor2(2, 2, Vec2(3, 3));
-        std::vector<Boid> boids = { centralBoid, neighbor1, neighbor2 };
 
-        Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
+    SUBCASE("Testing alignmentFactor = 0.5") {
+        double alignmentFactor = 0.5;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(1, 1), boids::Vec2(2, 2));
+        boids::Boid neighbor2(boids::Vec2(2, 2), boids::Vec2(3, 3));
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+
+        boids::Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
 
         // Con alignmentFactor = 0.5, il risultato dovrebbe essere la metà della differenza tra la media delle velocità e la velocità del Boid centrale
         CHECK(alignmentResult.x_ == doctest::Approx(0.75));
         CHECK(alignmentResult.y_ == doctest::Approx(0.75));
     }
-   SUBCASE("Testing con molti Boids e alignmentFactor = 1.0") {
-    // Boid centrale con molti vicini e alignmentFactor = 1.0
-    double alignmentFactor = 1.0;
-    Boid centralBoid(0, 0, Vec2(1, 1));
 
-    // Creiamo un grande numero di vicini
-    std::vector<Boid> boids;
-    boids.push_back(centralBoid);
-    for (int i = 1; i <= 30; ++i) {
-        boids.emplace_back(i, i, Vec2(2 + i * 0.1, 2 + i * 0.1)); // Vicini con velocità incrementale
+    SUBCASE("Testing con molti Boids e alignmentFactor = 1.0") {
+        double alignmentFactor = 1.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+
+        std::vector<boids::Boid> boids;
+        boids.push_back(centralBoid);
+        for (int i = 1; i <= 30; ++i) {
+            boids.emplace_back(boids::Vec2(i, i), boids::Vec2(2 + i * 0.1, 2 + i * 0.1));
+        }
+
+        boids::Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
+
+        // Calcolo della velocità media attesa
+        boids::Vec2 expectedVelocity(0, 0);
+        for (int i = 1; i <= 30; ++i) {
+            expectedVelocity += boids::Vec2(2 + i * 0.1, 2 + i * 0.1);
+        }
+        expectedVelocity = expectedVelocity / 30;
+
+        boids::Vec2 expectedAlignment = (expectedVelocity - centralBoid.velocity_);
+
+        CHECK(alignmentResult.x_ == doctest::Approx(expectedAlignment.x_));
+        CHECK(alignmentResult.y_ == doctest::Approx(expectedAlignment.y_));
     }
 
-    Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
+    SUBCASE("Test con alignmentFactor molto elevato") {
+        double alignmentFactor = 100.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
 
-    // Calcolo della velocità media attesa
-    Vec2 expectedVelocity(0, 0);
-    for (int i = 1; i <= 30; ++i) {
-        expectedVelocity += Vec2(2 + i * 0.1, 2 + i * 0.1);
+        std::vector<boids::Boid> boids = {
+            centralBoid,
+            boids::Boid(boids::Vec2(1, 1), boids::Vec2(2, 2)),
+            boids::Boid(boids::Vec2(-1, -1), boids::Vec2(3, 3)),
+            boids::Boid(boids::Vec2(2, -2), boids::Vec2(4, 4))};
+
+        boids::Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
+
+        // Calcolo della velocità media attesa
+        boids::Vec2 expectedVelocity(0, 0);
+        for (int i = 1; i < boids.size(); ++i) {
+            expectedVelocity += boids[i].velocity_;
+        }
+        expectedVelocity = expectedVelocity / (boids.size());
+
+        boids::Vec2 expectedAlignment = (expectedVelocity - centralBoid.velocity_) * alignmentFactor;
+
+        CHECK(alignmentResult.x_ == doctest::Approx(expectedAlignment.x_));
+        CHECK(alignmentResult.y_ == doctest::Approx(expectedAlignment.y_));
     }
-    expectedVelocity = expectedVelocity / 30;
-
-    // Risultato atteso: differenza tra la media delle velocità e la velocità del Boid centrale
-    Vec2 expectedAlignment = (expectedVelocity - centralBoid.velocity_);
-
-    CHECK(alignmentResult.x_ == doctest::Approx(expectedAlignment.x_));
-    CHECK(alignmentResult.y_ == doctest::Approx(expectedAlignment.y_));
+SUBCASE("Testing boids with opposite velocity") {
+    boids::Boid boid(boids::Vec2(0, 0), boids::Vec2(1.0, 1.0));
+    std::vector<boids::Boid> neighbors = {boids::Boid(boids::Vec2(1, 1), boids::Vec2(-1.0, -1.0)),
+                                          boids::Boid(boids::Vec2(-1, -1), boids::Vec2(3.0, 3.0))};
+    boids::Vec2 result = boid.alignment(neighbors, 0.5);
+    CHECK(result == boids::Vec2(0.0, 0.0)); // steer dovrebbe essere zero
 }
-SUBCASE("Test con alignmentFactor molto elevato") {
-    // Boid centrale con alcuni vicini e alignmentFactor molto elevato
-    double alignmentFactor = 100.0;  // Valore molto elevato
-    Boid centralBoid(0, 0, Vec2(1, 1));
+   SUBCASE("Testing with no neighbors") {
+    boids::Boid boid(boids::Vec2(0, 0), boids::Vec2(1.0, 1.0));
+    std::vector<boids::Boid> neighbors;  // Lista vuota
+    boids::Vec2 result = boid.alignment(neighbors, 0.5);
+    CHECK(result == boids::Vec2(0.0, 0.0)); // steer dovrebbe essere zero
+}
+SUBCASE("Test with one fast neighbors") {
+    boids::Boid boid(boids::Vec2(0, 0), boids::Vec2(1.0, 1.0));
+    std::vector<boids::Boid> neighbors = {boids::Boid(boids::Vec2(1, 1), boids::Vec2(10.0, 10.0))};
+    boids::Vec2 result = boid.alignment(neighbors, 0.5);
+    CHECK(result == boids::Vec2(4.5, 4.5)); // steer dovrebbe essere una spinta verso il vicino
+} 
+}
 
-    // Creiamo alcuni vicini con velocità diverse
-    std::vector<Boid> boids = {
-        centralBoid,
-        Boid(1, 1, Vec2(2, 2)),
-        Boid(-1, -1, Vec2(3, 3)),
-        Boid(2, -2, Vec2(4, 4))
-    };
 
-    Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor);
+TEST_CASE("Testing the function calculateCohesion") {
 
-    // Calcolo della velocità media attesa
-    Vec2 expectedVelocity(0, 0);
-    for (int i = 1; i < boids.size(); ++i) {
-        expectedVelocity += boids[i].velocity_;
+    SUBCASE("Testing cohesionFactor = 0.0") {
+        double cohesionFactor = 0.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(1, 1), boids::Vec2(2, 2));
+        boids::Boid neighbor2(boids::Vec2(2, 2), boids::Vec2(3, 3));
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+
+        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+
+        // Con cohesionFactor = 0.0, il risultato dovrebbe essere (0,0)
+        CHECK(cohesionResult.x_ == doctest::Approx(0));
+        CHECK(cohesionResult.y_ == doctest::Approx(0));
     }
-    expectedVelocity = expectedVelocity / (boids.size());
 
-    // Risultato atteso: differenza tra la media delle velocità e la velocità del Boid centrale, moltiplicata per alignmentFactor
-    Vec2 expectedAlignment = (expectedVelocity - centralBoid.velocity_) * alignmentFactor;
+    SUBCASE("Testing con un solo vicino e cohesionFactor = 1.0") {
+        double cohesionFactor = 1.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(10, 10), boids::Vec2(2, 2));
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1};
 
-    CHECK(alignmentResult.x_ == doctest::Approx(expectedAlignment.x_));
-    CHECK(alignmentResult.y_ == doctest::Approx(expectedAlignment.y_));
+        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+
+        // Il risultato dovrebbe essere la differenza tra la posizione del vicino e quella del boid centrale
+        CHECK(cohesionResult.x_ == doctest::Approx(10.0));
+        CHECK(cohesionResult.y_ == doctest::Approx(10.0));
+    }
+
+    SUBCASE("Testing con molti Boids e cohesionFactor = 0.5") {
+        double cohesionFactor = 0.5;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+
+        std::vector<boids::Boid> boids;
+        boids.push_back(centralBoid);
+        for (int i = 1; i <= 10; ++i) {
+            boids.emplace_back(boids::Vec2(i, i), boids::Vec2(2 + i * 0.1, 2 + i * 0.1));
+        }
+
+        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+
+        // Calcolo della posizione media attesa
+        boids::Vec2 expectedCenterOfMass(0, 0);
+        for (int i = 1; i <= 10; ++i) {
+            expectedCenterOfMass += boids::Vec2(i, i);
+        }
+        expectedCenterOfMass = expectedCenterOfMass / 10;
+
+        boids::Vec2 expectedCohesion = (expectedCenterOfMass - centralBoid.position_) * cohesionFactor;
+
+        CHECK(cohesionResult.x_ == doctest::Approx(expectedCohesion.x_));
+        CHECK(cohesionResult.y_ == doctest::Approx(expectedCohesion.y_));
+    }
+
+    SUBCASE("Test con cohesionFactor molto elevato") {
+        double cohesionFactor = 100.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+
+        std::vector<boids::Boid> boids = {
+            centralBoid,
+            boids::Boid(boids::Vec2(1, 1), boids::Vec2(2, 2)),
+            boids::Boid(boids::Vec2(-1, -1), boids::Vec2(3, 3)),
+            boids::Boid(boids::Vec2(2, -2), boids::Vec2(4, 4))
+        };
+
+        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+
+        // Calcolo della posizione media attesa
+        boids::Vec2 expectedCenterOfMass(0, 0);
+        for (int i = 1; i < boids.size(); ++i) {
+            expectedCenterOfMass += boids[i].position_;
+        }
+        expectedCenterOfMass = expectedCenterOfMass / (boids.size() - 1);
+
+        boids::Vec2 expectedCohesion = (expectedCenterOfMass - centralBoid.position_) * cohesionFactor;
+
+        CHECK(cohesionResult.x_ == doctest::Approx(expectedCohesion.x_));
+        CHECK(cohesionResult.y_ == doctest::Approx(expectedCohesion.y_));
+    }
+
+    SUBCASE("Test senza vicini (nessuna coesione)") {
+        double cohesionFactor = 1.0;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        std::vector<boids::Boid> boids = {centralBoid};
+
+        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+
+        // Con nessun vicino, il risultato dovrebbe essere (0,0)
+        CHECK(cohesionResult.x_ == doctest::Approx(0));
+        CHECK(cohesionResult.y_ == doctest::Approx(0));
+    }
 }
 
-   
-}
+
+
+
+
+
+
+
+
+
+
