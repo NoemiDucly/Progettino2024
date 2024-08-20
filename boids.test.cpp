@@ -140,7 +140,7 @@ SUBCASE("Test with one fast neighbors") {
 }
 
 
-TEST_CASE("Testing the function calculateCohesion") {
+TEST_CASE("Testing the function cohesion") {
 
     SUBCASE("Testing cohesionFactor = 0.0") {
         double cohesionFactor = 0.0;
@@ -149,27 +149,27 @@ TEST_CASE("Testing the function calculateCohesion") {
         boids::Boid neighbor2(boids::Vec2(2, 2), boids::Vec2(3, 3));
         std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
 
-        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+        boids::Vec2 cohesionResult = centralBoid.cohesion(boids, cohesionFactor);
 
         // Con cohesionFactor = 0.0, il risultato dovrebbe essere (0,0)
         CHECK(cohesionResult.x_ == doctest::Approx(0));
         CHECK(cohesionResult.y_ == doctest::Approx(0));
     }
 
-    SUBCASE("Testing con un solo vicino e cohesionFactor = 1.0") {
+    SUBCASE("Testing with on neighbors cohesionFactor = 1.0") {
         double cohesionFactor = 1.0;
         boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
         boids::Boid neighbor1(boids::Vec2(10, 10), boids::Vec2(2, 2));
         std::vector<boids::Boid> boids = {centralBoid, neighbor1};
 
-        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+        boids::Vec2 cohesionResult = centralBoid.cohesion(boids, cohesionFactor);
 
         // Il risultato dovrebbe essere la differenza tra la posizione del vicino e quella del boid centrale
         CHECK(cohesionResult.x_ == doctest::Approx(10.0));
         CHECK(cohesionResult.y_ == doctest::Approx(10.0));
     }
 
-    SUBCASE("Testing con molti Boids e cohesionFactor = 0.5") {
+    SUBCASE("Testing with many and cohesionFactor = 0.5") {
         double cohesionFactor = 0.5;
         boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
 
@@ -179,7 +179,7 @@ TEST_CASE("Testing the function calculateCohesion") {
             boids.emplace_back(boids::Vec2(i, i), boids::Vec2(2 + i * 0.1, 2 + i * 0.1));
         }
 
-        boids::Vec2 cohesionResult = centralBoid.calculateCohesion(boids, cohesionFactor);
+        boids::Vec2 cohesionResult = centralBoid.cohesion(boids, cohesionFactor);
 
         // Calcolo della posizione media attesa
         boids::Vec2 expectedCenterOfMass(0, 0);
@@ -220,7 +220,7 @@ TEST_CASE("Testing the function calculateCohesion") {
         CHECK(cohesionResult.y_ == doctest::Approx(expectedCohesion.y_));
     }
 
-    SUBCASE("Test senza vicini (nessuna coesione)") {
+    SUBCASE("Testing with no neighbors") {
         double cohesionFactor = 1.0;
         boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
         std::vector<boids::Boid> boids = {centralBoid};
