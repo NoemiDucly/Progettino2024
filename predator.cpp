@@ -51,30 +51,20 @@ double Vec2::distance(const Vec2& other) {
   double dist = std::sqrt(dx_ * dx_ + dy_ * dy_);
   return dist;
 }
-class Predator {
-public:
-    Vec2 position_;
-    Vec2 velocity_;
 
-    Predator(double x, double y) {
-        position_ = Vec2(x, y);
-        velocity_ = Vec2(rand() % 3 - 1, rand() % 3 - 1);  // Velocità iniziale casuale
-    }
-
-    void move() {
-        position_ += velocity_;
-    if (position_.x < 0) position_.x = 800;
-    if (position_.x > 800) position_.x = 0;
-    if (position_.y < 0) position_.y = 600;
-    if (position_.y > 600) position_.y = 0; //limitare i movimenti nella finestra 
-    }
-};
 
 
 Boid::Boid(double x_, double y_) {
-  position_ = Vec2(x_, y_);
-  velocity_ = Vec2(rand() % 3, rand() % 3);
-  acceleration_ = Vec2(0, 0);
+    position_ = Vec2(x_, y_);
+    velocity_ = Vec2(rand() % 3, rand() % 3);
+    acceleration_ = Vec2(0, 0);
+    isPredator_ = false;  // Imposta isPredator_ a false per i boid normali
+}
+
+// Costruttore che accetta posizione, velocità e un flag per il predatore
+Boid::Boid(const Vec2& pos, const Vec2& vel, bool isPredator)
+    : position_(pos), velocity_(vel), isPredator_(isPredator) {
+    acceleration_ = Vec2(0, 0);
 }
 
 Vec2 Boid::setPosition(double x_, double y_) {
@@ -191,3 +181,85 @@ void Boid::run(const std::vector<Boid>& v, double a) {
 }
 
 }  // namespace boids
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "simulation", sf::Style::Titlebar);
+    window.setPosition(sf::Vector2i(10, 50));
+    window.setFramerateLimit(60);
+
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+
+    sf::RectangleShape sliderBar(sf::Vector2f(600, 10));
+    sliderBar.setPosition(100, 100);
+    sliderBar.setFillColor(sf::Color::White);
+
+    sf::CircleShape sliderKnob(10);
+    sliderKnob.setFillColor(sf::Color::Red);
+    sliderKnob.setPosition(100, 95);
+
+    bool isDragging = false;
+    double a = 0;
+
+    boids::Flock flock;
+    std::vector<sf::CircleShape> shapes;
+
+    for (int i = 0; i < 100; ++i) {
+        boids::Boid b(rand() % 800, rand() % 600);
+        sf::CircleShape shape(8, 3);
+        shape.setFillColor(sf::Color::White);  // Colore per i boid normali
+        flock.addBoid(b);
+        shapes.push_back(shape);
+    }
+
+    // Creazione del predatore
+    boids::Boid predatorBoid(400, 300);
+    predatorBoid.isPredator_ = true;
+    sf::CircleShape predatorShape(10, 3);
+    predatorShape.setFillColor(sf::Color::Red);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+
+            if (event.type == sf::Event::MouseButtonPressed) {
+                if (sliderKnob.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y)) {
+                    isDragging = true;
+                }
+            }
+
+            if (event.type == sf::Event::MouseButtonReleased) {
+                isDragging = false;
+            }
+
+            if (event.type == sf::Event::MouseMoved && isDragging) {
+                float newPosX = event.mouseMove.x - sliderKnob.getRadius();
+                newPosX = std::max(100.0f, std::min(newPosX, 690.0f));
+                sliderKnob.setPosition(newPosX, sliderKnob.getPosition().y);
+
+                // Mappare la posizione del knob a un valore tra 0 e 2
+                a = ((newPosX - 100.0f) / 590.0f) * 2.0f;
+            }
+        }
+
+        window.clear(sf::Color::Black);
+
+        for (int i = 0; i < shapes.size(); ++i) {
+            flock.getBoid(i).update(flock.getBoids(), a, predatorBoid);
+            shapes[i].setPosition(flock.getBoid(i).getPosition().x_, flock.getBoid(i).getPosition().y_);
+            window.draw(shapes[i]);
+        }
+
+        // Aggiornamento e disegno del predatore
+        predatorShape.setPosition(predatorBoid.getPosition().x_, predatorBoid.getPosition().y_);
+        window.draw(predatorShape);
+
+        flock.flocking();
+        window.draw(sliderBar);
+        window.draw(sliderKnob);
+        window.display();
+    }
+
+    return 0;
+}
