@@ -17,6 +17,10 @@ class Flock {
     Boid &getBoid(int i);
     void addBoid(const Boid& b);
     void flocking();
+    double calculateAverageSpeed();
+    double calculateAverageDistance();
+    double calculateSpeedStandardDeviation();
+    double alculateDistanceStandardDeviation();
 };
 }
 
