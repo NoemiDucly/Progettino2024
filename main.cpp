@@ -80,6 +80,24 @@ int main() {
     window.draw(sliderBar);
     window.draw(sliderKnob);
     window.display();
+    while (window.isOpen()) {
+    // Gestione degli eventi
+
+    // Calcolo delle statistiche
+    double averageDistance = flock.calculateAverageDistance();
+    double averageSpeed = flock.calculateAverageSpeed();
+    double distanceStdDev = flock.calculateDistanceStandardDeviation();
+    double speedStdDev = flock.calculateSpeedStandardDeviation();
+
+    // Visualizzazione delle statistiche sulla console
+    std::cout << "Average Distance: " << averageDistance << "\n";
+    std::cout << "Average Speed: " << averageSpeed << "\n";
+    std::cout << "Distance Standard Deviation: " << distanceStdDev << "\n";
+    std::cout << "Speed Standard Deviation: " << speedStdDev << "\n";
+
+
+}
+
   }
   return 0;
 }
