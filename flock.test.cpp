@@ -40,7 +40,7 @@ TEST_CASE("Test della funzione calculateAverageSpeed") {
     CHECK (flock.calculateAverageSpeed()==5.0);
 }
 
-TEST_CASE("Test della funzione calculateAverageDistance con boids a posizioni diverse") {
+TEST_CASE("Test della funzione calculateAverageDistance") {
   SUBCASE( "Testing empty flock"){
     boids::Flock flock;
 
