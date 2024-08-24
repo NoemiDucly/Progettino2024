@@ -48,6 +48,15 @@ double Vec2::distance(const Vec2& other) {
   double dist = std::sqrt(dx_ * dx_ + dy_ * dy_);
   return dist;
 }
+Vec2 Vec2::normalize() const {
+        double len = length();  // Calcola la lunghezza
+        if (len > 0) {
+            return Vec2(x_ / len, y_ / len);  // Ritorna il vettore normalizzato
+        } else {
+            return Vec2(0, 0);  // Se la lunghezza è zero, ritorna un vettore nullo
+        }
+    }
+
 
 Boid::Boid(double x_, double y_) {
   position_ = Vec2(x_, y_);
