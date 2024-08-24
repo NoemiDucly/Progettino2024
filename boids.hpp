@@ -25,13 +25,14 @@ struct Vec2 {  // vettore in due dimensioni
 
   Vec2 operator*(double scalar) const;
 
-  Vec2& operator*=(double scalar); 
+  Vec2& operator*=(double scalar);
 
   Vec2 operator/(double scalar) const;
 
   double lenght() const;
 
   double distance(const Vec2& other);
+  Vec2 normalize() const;
 };
 
 class Boid {
