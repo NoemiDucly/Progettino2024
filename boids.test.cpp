@@ -232,6 +232,97 @@ TEST_CASE("Testing the function cohesion") {
         CHECK(cohesionResult.y_ == doctest::Approx(0));
     }
 }
+TEST_CASE("Testing the function separation") {
+
+    SUBCASE("Testing with no neighbors") {
+        float separation_distance = 5.0f;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        std::vector<boids::Boid> boids = {centralBoid};
+
+        boids::Vec2 separationResult = centralBoid.separation(boids, separation_distance);
+
+        // Con nessun vicino, il risultato dovrebbe essere (0,0)
+        CHECK(separationResult.x_ == doctest::Approx(0));
+        CHECK(separationResult.y_ == doctest::Approx(0));
+    }
+
+    SUBCASE("Testing with one neighbor within separation distance") {
+        float separation_distance = 5.0f;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor(boids::Vec2(3, 4), boids::Vec2(2, 2));  // Distanza = 5.0
+        std::vector<boids::Boid> boids = {centralBoid, neighbor};
+
+        boids::Vec2 separationResult = centralBoid.separation(boids, separation_distance);
+
+        // Il risultato dovrebbe essere un vettore che punta in direzione opposta al vicino e normalizzato
+        boids::Vec2 expectedSeparation = (centralBoid.position_ - neighbor.position_).normalize();
+        CHECK(separationResult.x_ == doctest::Approx(expectedSeparation.x_));
+        CHECK(separationResult.y_ == doctest::Approx(expectedSeparation.y_));
+    }
+
+    SUBCASE("Testing with multiple neighbors within separation distance") {
+        float separation_distance = 10.0f;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(5, 0), boids::Vec2(2, 2));  // Distanza = 5.0
+        boids::Boid neighbor2(boids::Vec2(0, 5), boids::Vec2(3, 3));  // Distanza = 5.0
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+
+        boids::Vec2 separationResult = centralBoid.separation(boids, separation_distance);
+
+        // Il risultato dovrebbe essere la somma dei vettori di separazione da ciascun vicino
+        boids::Vec2 expectedSeparation1 = (centralBoid.position_ - neighbor1.position_).normalize() / 5.0;
+        boids::Vec2 expectedSeparation2 = (centralBoid.position_ - neighbor2.position_).normalize() / 5.0;
+        boids::Vec2 expectedSeparation = expectedSeparation1 + expectedSeparation2;
+
+        CHECK(separationResult.x_ == doctest::Approx(expectedSeparation.x_));
+        CHECK(separationResult.y_ == doctest::Approx(expectedSeparation.y_));
+    }
+
+    SUBCASE("Testing with neighbors outside of separation distance") {
+        float separation_distance = 3.0f;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(10, 0), boids::Vec2(2, 2));  // Distanza > 3.0
+        boids::Boid neighbor2(boids::Vec2(0, 10), boids::Vec2(3, 3));  // Distanza > 3.0
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+
+        boids::Vec2 separationResult = centralBoid.separation(boids, separation_distance);
+
+        // Con tutti i vicini al di fuori della distanza di separazione, il risultato dovrebbe essere (0,0)
+        CHECK(separationResult.x_ == doctest::Approx(0));
+        CHECK(separationResult.y_ == doctest::Approx(0));
+    }
+   SUBCASE("Testing with zero separation distance") {
+        float separation_distance = 0.0f;
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor(boids::Vec2(3, 4), boids::Vec2(2, 2));  // Distanza = 5.0
+        std::vector<boids::Boid> boids = {centralBoid, neighbor};
+
+        boids::Vec2 separationResult = centralBoid.separation(boids, separation_distance);
+
+        // Con separation_distance = 0.0, nessun boid dovrebbe essere considerato vicino, quindi il risultato dovrebbe essere (0,0)
+        CHECK(separationResult.x_ == doctest::Approx(0));
+        CHECK(separationResult.y_ == doctest::Approx(0));
+    }
+
+    SUBCASE("Testing with very large separation distance") {
+        float separation_distance = 1000.0f;  // Molto più grande della distanza tra i boids
+        boids::Boid centralBoid(boids::Vec2(0, 0), boids::Vec2(1, 1));
+        boids::Boid neighbor1(boids::Vec2(3, 4), boids::Vec2(2, 2));  // Distanza = 5.0
+        boids::Boid neighbor2(boids::Vec2(1, 1), boids::Vec2(2, 2));  // Distanza = 1.414
+        std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+
+        boids::Vec2 separationResult = centralBoid.separation(boids, separation_distance);
+
+        // Calcoliamo il vettore di separazione atteso
+        boids::Vec2 expectedSeparation1 = (centralBoid.position_ - neighbor1.position_).normalize() / 5.0;
+        boids::Vec2 expectedSeparation2 = (centralBoid.position_ - neighbor2.position_).normalize() / 1.414;
+        boids::Vec2 expectedSeparation = expectedSeparation1 + expectedSeparation2;
+
+        CHECK(separationResult.x_ == doctest::Approx(expectedSeparation.x_));
+        CHECK(separationResult.y_ == doctest::Approx(expectedSeparation.y_));
+    }
+}
+
 
 
 
