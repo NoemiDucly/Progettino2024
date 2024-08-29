@@ -72,7 +72,7 @@ TEST_CASE("Testing function Boid::alignment") {
     double alignmentFactor{0.0};
     boids::Boid neighbor1(1, 1, 2, 2);
     boids::Boid neighbor2(2, 2, 3, 3);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1, neighbor2}};
 
     boids::Vec2 alignmentResult{
         centralBoid.alignment(boids, alignmentFactor, d)};
@@ -85,7 +85,7 @@ TEST_CASE("Testing function Boid::alignment") {
     double alignmentFactor{0.5};
     boids::Boid neighbor1(1, 1, 2, 2);
     boids::Boid neighbor2(2, 2, 3, 3);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1, neighbor2}};
 
     boids::Vec2 alignmentResult{
         centralBoid.alignment(boids, alignmentFactor, d)};
@@ -124,9 +124,9 @@ TEST_CASE("Testing function Boid::alignment") {
   SUBCASE("Test with very high alignmentFactor") {
     double alignmentFactor{100.0};
 
-    std::vector<boids::Boid> boids = {centralBoid, boids::Boid(1, 1, 2, 2),
+    std::vector<boids::Boid> boids{{centralBoid, boids::Boid(1, 1, 2, 2),
                                       boids::Boid(-1, -1, 3, 3),
-                                      boids::Boid(2, -2, 4, 4)};
+                                      boids::Boid(2, -2, 4, 4)}};
 
     boids::Vec2 alignmentResult{
         centralBoid.alignment(boids, alignmentFactor, d)};
@@ -149,8 +149,8 @@ TEST_CASE("Testing function Boid::alignment") {
 
   SUBCASE("Testing boids with opposite velocity") {
     boids::Boid boid(0, 0, 1, 1);
-    std::vector<boids::Boid> neighbors = {boids::Boid(1, 1, -1, -1),
-                                          boids::Boid(-1, -1, 3, 3)};
+    std::vector<boids::Boid> neighbors{{boids::Boid(1, 1, -1, -1),
+                                          boids::Boid(-1, -1, 3, 3)}};
     boids::Vec2 result{boid.alignment(neighbors, 0.5, d)};
     CHECK(result.x_ == 0.0);
     CHECK(result.y_ == 0.0);
@@ -175,7 +175,7 @@ TEST_CASE("Testing function Boid::cohesion") {
     double cohesionFactor{0.0};
     boids::Boid neighbor1(1, 1, 2, 2);
     boids::Boid neighbor2(2, 2, 3, 3);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1, neighbor2}};
 
     boids::Vec2 cohesionResult{centralBoid.cohesion(boids, cohesionFactor, d)};
 
@@ -186,7 +186,7 @@ TEST_CASE("Testing function Boid::cohesion") {
   SUBCASE("Testing with one neighbor and cohesionFactor = 1.0") {
     double cohesionFactor{1.0};
     boids::Boid neighbor1(10, 10, 2, 2);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1}};
 
     boids::Vec2 cohesionResult{centralBoid.cohesion(boids, cohesionFactor, d)};
 
@@ -222,9 +222,9 @@ TEST_CASE("Testing function Boid::cohesion") {
   SUBCASE("Test with very high cohesionFactor") {
     double cohesionFactor{100.0};
 
-    std::vector<boids::Boid> boids = {centralBoid, boids::Boid(1, 1, 2, 2),
+    std::vector<boids::Boid> boids{{centralBoid, boids::Boid(1, 1, 2, 2),
                                       boids::Boid(-1, -1, 3, 3),
-                                      boids::Boid(2, -2, 4, 4)};
+                                      boids::Boid(2, -2, 4, 4)}};
 
     boids::Vec2 cohesionResult{centralBoid.cohesion(boids, cohesionFactor, d)};
 
@@ -248,7 +248,7 @@ expectedCenterOfMass{expectedCenterOfMass / static_cast<double>(boids.size())};
 
   SUBCASE("Test with no neighbors") {
     double cohesionFactor{1.0};
-    std::vector<boids::Boid> boids = {centralBoid};
+    std::vector<boids::Boid> boids{{centralBoid}};
 
     boids::Vec2 cohesionResult{centralBoid.cohesion(boids, cohesionFactor, d)};
 
@@ -263,7 +263,7 @@ TEST_CASE("Testing function Boid::separation") {
 
   SUBCASE("Testing with no neighbors") {
     double separationDistance{5.0};
-    std::vector<boids::Boid> boids = {centralBoid};
+    std::vector<boids::Boid> boids{{centralBoid}};
 
     boids::Vec2 separationResult{
         centralBoid.separation(boids, separationDistance, 1, d)};
@@ -275,7 +275,7 @@ TEST_CASE("Testing function Boid::separation") {
   SUBCASE("Testing with one neighbor within separation distance") {
     double separationDistance{5.0};
     boids::Boid neighbor(2, 3, 2, 2);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor}};
     double distanceS{
         (centralBoid.getPosition() - neighbor.getPosition()).lenght()};
     boids::Vec2 separationResult{
@@ -293,7 +293,7 @@ TEST_CASE("Testing function Boid::separation") {
     double separationDistance{10.0};
     boids::Boid neighbor1(5, 0, 2, 2);
     boids::Boid neighbor2(0, 5, 3, 3);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1, neighbor2}};
 
     boids::Vec2 separationResult{
         centralBoid.separation(boids, separationDistance, 1, d)};
@@ -316,7 +316,7 @@ TEST_CASE("Testing function Boid::separation") {
     double separationDistance{3.0};
     boids::Boid neighbor1(10, 0, 2, 2);
     boids::Boid neighbor2(0, 10, 3, 3);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1, neighbor2}};
 
     boids::Vec2 separationResult{
         centralBoid.separation(boids, separationDistance, 1, d)};
@@ -328,7 +328,7 @@ TEST_CASE("Testing function Boid::separation") {
   SUBCASE("Testing with zero separation distance") {
     double separationDistance{0.0};
     boids::Boid neighbor(3, 4, 2, 2);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor}};
 
     boids::Vec2 separationResult{
         centralBoid.separation(boids, separationDistance, 1, d)};
@@ -341,7 +341,7 @@ TEST_CASE("Testing function Boid::separation") {
     double separationDistance{1000.0};
     boids::Boid neighbor1(3, 4, 2, 2);
     boids::Boid neighbor2(1, 1, 2, 2);
-    std::vector<boids::Boid> boids = {centralBoid, neighbor1, neighbor2};
+    std::vector<boids::Boid> boids{{centralBoid, neighbor1, neighbor2}};
 
     boids::Vec2 separationResult{
         centralBoid.separation(boids, separationDistance, 1, d)};
