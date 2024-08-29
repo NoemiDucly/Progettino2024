@@ -107,10 +107,12 @@ TEST_CASE("Testing function Boid::alignment") {
         centralBoid.alignment(boids, alignmentFactor, d)};
 
     boids::Vec2 expectedVelocity(0, 0);
-    for (int i = 1; i <= 30; ++i) {
-      expectedVelocity += boids::Vec2(2 + i * 0.1, 2 + i * 0.1);
+    for (const auto& boid : boids) {
+        if (&boid != &centralBoid) {
+            expectedVelocity += boid.getVelocity();
+        }
     }
-    expectedVelocity = expectedVelocity / 30;
+    expectedVelocity = expectedVelocity/(static_cast<double>(boids.size()) - 1);
 
     boids::Vec2 expectedAlignment{
         (expectedVelocity - centralBoid.getVelocity())};
@@ -130,9 +132,10 @@ TEST_CASE("Testing function Boid::alignment") {
         centralBoid.alignment(boids, alignmentFactor, d)};
 
     boids::Vec2 expectedVelocity(0, 0);
-
-    for (long unsigned int i = 1; i < boids.size(); ++i) {
-      expectedVelocity += boids[i].getVelocity();
+ for (const auto& boid : boids) {
+        if (&boid != &centralBoid) {
+            expectedVelocity += boid.getVelocity();
+        }
     }
     expectedVelocity =
         expectedVelocity / (static_cast<double>(boids.size()) - 1);
