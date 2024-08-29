@@ -3,8 +3,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-// #include "SFML/Graphics.hpp"
-// #include <random>
+
 
 namespace boids {
 
