@@ -9,8 +9,8 @@
 namespace boids {
 
 void Vec2::setValues(double x, double y) {
-  x_ = x;
-  y_ = y;
+  x_{x};
+  y_{y};
 }
 
 Vec2 Vec2::operator+(const Vec2& other) const {
@@ -63,22 +63,22 @@ double Vec2::lenght() const {
 // }
 
 void Vec2::limit(double max) {
-  double module = lenght();
+  double module{lenght()};
   if (module >= max) {
     setValues(x_ * max / module, y_ * max / module);
   }
 }
 
 double Vec2::distance(const Vec2& other) const {
-  double dx_ = x_ - other.x_;
-  double dy_ = y_ - other.y_;
-  double dist = std::sqrt(dx_ * dx_ + dy_ * dy_);
+  double dx_{x_ - other.x_};
+  double dy_{y_ - other.y_};
+  double dist{std::sqrt(dx_ * dx_ + dy_ * dy_)};
   assert(dist >= 0);
   return dist;
 }
 
 Vec2 Vec2::normalize() const {
-  double len = Vec2::lenght();
+  double len{Vec2::lenght()};
   if (len > 0) {
     Vec2 norm(x_ / len, y_ / len);
     assert(std::abs(norm.lenght() - 1.0) < 1e-9);
@@ -97,8 +97,8 @@ Boid::Boid(double x, double y, double vx, double vy)
 }
 
 Vec2 Boid::setPosition(double x, double y) {
-  position_.x_ = x;
-  position_.y_ = y;
+  position_.x_{x};
+  position_.y_{y};
   return position_;
 }
 
@@ -107,7 +107,7 @@ std::vector<Boid> Boid::getNeighbors(const std::vector<Boid>& boids,
   std::vector<Boid> neighbors;
 
   for (const Boid& boid : boids) {
-    double d = position_.distance(boid.position_);
+    double d{position_.distance(boid.position_)};
     if ((d > 0) && (d < perception)) {
       neighbors.push_back(boid);
     }
@@ -128,8 +128,8 @@ Vec2 Boid::alignment(const std::vector<Boid>& boids, double alignmentFactor,
   }
 
   if (neighbors.size() > 0) {
-    steer = ((sum / static_cast<double>(neighbors.size())) - velocity_) *
-            alignmentFactor;
+    steer{((sum / static_cast<double>(neighbors.size())) - velocity_) *
+            alignmentFactor};
   }
 
   return steer;
@@ -148,8 +148,8 @@ Vec2 Boid::cohesion(const std::vector<Boid>& boids, double cohesionFactor,
   }
 
   if (neighbors.size() > 0) {
-    centerOfMass = centerOfMass / static_cast<double>(neighbors.size());
-    steer = (centerOfMass - position_) * cohesionFactor;
+    centerOfMass{centerOfMass / static_cast<double>(neighbors.size())};
+    steer{(centerOfMass - position_) * cohesionFactor};
   }
   
   return steer;
@@ -166,17 +166,17 @@ Vec2 Boid::separation(const std::vector<Boid>& boids, double separationDistance,
   auto neighbors = getNeighbors(boids, perception);
 
   for (const Boid& neighbor : neighbors) {
-    double distanceS = (position_ - neighbor.position_).lenght();
+    double distanceS{(position_ - neighbor.position_).lenght()};
     if (distanceS > 0 && distanceS < separationDistance) {
       Vec2 diff = position_ - neighbor.position_;
       diff = diff.normalize() / distanceS;
-      steer = (steer + diff) * separationFactor;
+      steer{(steer + diff) * separationFactor};
       ++count;
     }
   }
 
   if (count > 0) {
-    steer = steer / count;
+    steer{steer / count};
   }
   return steer;
 };
