@@ -126,12 +126,12 @@ TEST_CASE("Testing function Flock::calculateSpeedStandardDeviation") {
     boids::Boid b3(20, 20, 1, 1);
     flock.addBoid(b3);
 
-    avgSpeed = (std::sqrt(2.0) + 10.0 + std::sqrt(2.0)) / 3.0;  // Media ≈ 5.814
-    variance = ((std::sqrt(2.0) - avgSpeed) * (std::sqrt(2.0) - avgSpeed) +
+    avgSpeed{(std::sqrt(2.0) + 10.0 + std::sqrt(2.0)) / 3.0};  // Media ≈ 5.814
+    variance{((std::sqrt(2.0) - avgSpeed) * (std::sqrt(2.0) - avgSpeed) +
                 (10.0 - avgSpeed) * (10.0 - avgSpeed) +
                 (std::sqrt(2.0) - avgSpeed) * (std::sqrt(2.0) - avgSpeed)) /
-               3.0;
-    expectedStdDev = std::sqrt(variance);
+               3.0};
+    expectedStdDev{std::sqrt(variance)};
     CHECK(flock.calculateSpeedStandardDeviation() ==
           doctest::Approx(expectedStdDev));
   }
@@ -197,16 +197,16 @@ TEST_CASE("Testing function Flock::calculateDistanceStandardDeviation") {
     double d24{pos1.distance(pos3)};
     double d34{pos2.distance(pos3)};
 
-    averageDistance = (d12 + d23 + d13 + d14 + d24 + d34) / 6;
-    variance = ((d12 - averageDistance) * (d12 - averageDistance) +
+    averageDistance{(d12 + d23 + d13 + d14 + d24 + d34) / 6};
+    variance{((d12 - averageDistance) * (d12 - averageDistance) +
                 (d23 - averageDistance) * (d23 - averageDistance) +
                 (d13 - averageDistance) * (d13 - averageDistance) +
                 (d14 - averageDistance) * (d14 - averageDistance) +
                 (d24 - averageDistance) * (d24 - averageDistance) +
                 (d34 - averageDistance) * (d34 - averageDistance)) /
-               6;
+               6};
 
-    expectedStandardDeviation = std::sqrt(variance);
+    expectedStandardDeviation{std::sqrt(variance)};
 
     CHECK(flock.calculateDistanceStandardDeviation() ==
           doctest::Approx(expectedStandardDeviation));
