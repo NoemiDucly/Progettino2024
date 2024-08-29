@@ -225,7 +225,7 @@ boids::Vec2 expectedCenterOfMass(0, 0);
 for (const auto& boid : boids) {
     expectedCenterOfMass += boid.getPosition();
 }
-expectedCenterOfMass{expectedCenterOfMass / static_cast<double>(boids.size())};
+expectedCenterOfMass{expectedCenterOfMass / static_cast<double>((boids.size())-1)};
 
  
 
@@ -235,15 +235,14 @@ expectedCenterOfMass{expectedCenterOfMass / static_cast<double>(boids.size())};
     CHECK(cohesionResult.x_ == doctest::Approx(expectedCohesion.x_));
     CHECK(cohesionResult.y_ == doctest::Approx(expectedCohesion.y_));
   }
+SUBCASE ("Testing with no neighbors)
+ std::vector<boids::Boid> boids{ centralBoid };
+    double alignmentFactor = 1.0;
+    boids::Vec2 alignmentResult = centralBoid.alignment(boids, alignmentFactor, d);
+    boids::Vec2 expectedAlignment(0, 0); 
 
-  SUBCASE("Test with no neighbors") {
-    double cohesionFactor{1.0};
-    std::vector<boids::Boid> boids{{centralBoid}};
-
-    boids::Vec2 cohesionResult{centralBoid.cohesion(boids, cohesionFactor, d)};
-
-    CHECK(cohesionResult.x_ == doctest::Approx(0));
-    CHECK(cohesionResult.y_ == doctest::Approx(0));
+    CHECK(alignmentResult.x_ == doctest::Approx(expectedAlignment.x_));
+    CHECK(alignmentResult.y_ == doctest::Approx(expectedAlignment.y_));;
   }
 }
 
@@ -253,7 +252,7 @@ TEST_CASE("Testing function Boid::separation") {
 
   SUBCASE("Testing with no neighbors") {
     double separationDistance{5.0};
-    std::vector<boids::Boid> boids{{centralBoid}};
+    std::vector<boids::Boid> boids{centralBoid};
 
     boids::Vec2 separationResult{
         centralBoid.separation(boids, separationDistance, 1, d)};
@@ -296,7 +295,7 @@ TEST_CASE("Testing function Boid::separation") {
         5.0};
 
     boids::Vec2 expectedSeparation{(expectedSeparation1 + expectedSeparation2) /
-                                   2};  // count = 2
+                                   2}; 
 
     CHECK(separationResult.x_ == doctest::Approx(expectedSeparation.x_));
     CHECK(separationResult.y_ == doctest::Approx(expectedSeparation.y_));
