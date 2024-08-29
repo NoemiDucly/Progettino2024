@@ -99,7 +99,7 @@ TEST_CASE("Testing function Boid::alignment") {
 
     std::vector<boids::Boid> boids;
     boids.push_back(centralBoid);
-    for (int i = 1; i <= 30; ++i) {
+    for (int i{1}; i <= 30; ++i) {
       boids.emplace_back(i, i, 2 + i * 0.1, 2 + i * 0.1);
     }
 
@@ -137,8 +137,8 @@ TEST_CASE("Testing function Boid::alignment") {
             expectedVelocity += boid.getVelocity();
         }
     }
-    expectedVelocity =
-        expectedVelocity / (static_cast<double>(boids.size()) - 1);
+    expectedVelocity{
+        expectedVelocity / (static_cast<double>(boids.size()) - 1)};
 
     boids::Vec2 expectedAlignment{
         (expectedVelocity - centralBoid.getVelocity()) * alignmentFactor};
@@ -199,7 +199,7 @@ TEST_CASE("Testing function Boid::cohesion") {
 
     std::vector<boids::Boid> boids;
     boids.push_back(centralBoid);
-    for (int i = 1; i <= 10; ++i) {
+    for (int i{1}; i <= 10; ++i) {
       boids.emplace_back(i, i, 2 + i * 0.1, 2 + i * 0.1);
     }
 
@@ -210,7 +210,7 @@ TEST_CASE("Testing function Boid::cohesion") {
     for (const auto& boid : boids) {
         expectedCenterOfMass += boid.getPosition(); 
     }
-    expectedCenterOfMass = expectedCenterOfMass / (static_cast<double>(boids.size());
+    expectedCenterOfMass{expectedCenterOfMass / (static_cast<double>(boids.size())};
 
     boids::Vec2 expectedCohesion{
         (expectedCenterOfMass - centralBoid.getPosition()) * cohesionFactor};
@@ -235,12 +235,12 @@ boids::Vec2 expectedCenterOfMass(0, 0);
 for (const auto& boid : boids) {
     expectedCenterOfMass += boid.getPosition();
 }
-expectedCenterOfMass = expectedCenterOfMass / static_cast<double>(boids.size());
+expectedCenterOfMass{expectedCenterOfMass / static_cast<double>(boids.size())};
 
  
 
-    boids::Vec2 expectedCohesion =
-        (expectedCenterOfMass - centralBoid.getPosition()) * cohesionFactor;
+    boids::Vec2 expectedCohesion{
+        (expectedCenterOfMass - centralBoid.getPosition()) * cohesionFactor};
 
     CHECK(cohesionResult.x_ == doctest::Approx(expectedCohesion.x_));
     CHECK(cohesionResult.y_ == doctest::Approx(expectedCohesion.y_));
