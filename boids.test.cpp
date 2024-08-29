@@ -112,7 +112,7 @@ TEST_CASE("Testing function Boid::alignment") {
             expectedVelocity += boid.getVelocity();
         }
     }
-    expectedVelocity = expectedVelocity/(static_cast<double>(boids.size()) - 1);
+    expectedVelocity{expectedVelocity/(static_cast<double>(boids.size()) - 1)};
 
     boids::Vec2 expectedAlignment{
         (expectedVelocity - centralBoid.getVelocity())};
