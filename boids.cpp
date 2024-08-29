@@ -168,8 +168,8 @@ Vec2 Boid::separation(const std::vector<Boid>& boids, double separationDistance,
   for (const Boid& neighbor : neighbors) {
     double distanceS{(position_ - neighbor.position_).lenght()};
     if (distanceS > 0 && distanceS < separationDistance) {
-      Vec2 diff = position_ - neighbor.position_;
-      diff = diff.normalize() / distanceS;
+      Vec2 diff{position_ - neighbor.position_};
+      diff{diff.normalize() / distanceS};
       steer{(steer + diff) * separationFactor};
       ++count;
     }
@@ -183,9 +183,9 @@ Vec2 Boid::separation(const std::vector<Boid>& boids, double separationDistance,
 
 void Boid::update(const std::vector<Boid>& v, double a, double c, double s,
                   double d, double ds) {
-  Vec2 ali = alignment(v, a, d);
-  Vec2 cohe = cohesion(v, c, d);
-  Vec2 sep = separation(v, ds, s, d);
+  Vec2 ali{alignment(v, a, d)};
+  Vec2 cohe{cohesion(v, c, d)};
+  Vec2 sep{separation(v, ds, s, d)};
   acceleration_ += ali;
   acceleration_ += cohe;
   acceleration_ += sep;
