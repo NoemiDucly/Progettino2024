@@ -37,26 +37,26 @@ void Slider::handleEvent(const sf::Event& event) {
     if (sliderKnob_.getGlobalBounds().contains(
             static_cast<float>(event.mouseButton.x),
             static_cast<float>(event.mouseButton.y))) {
-      isDragging_ = true;
+      isDragging_{true};
     }
   }
 
   if (event.type == sf::Event::MouseButtonReleased) {
-    isDragging_ = false;
+    isDragging_{false};
   }
 
   if (event.type == sf::Event::MouseMoved && isDragging_) {
-    float newPosX =
-        static_cast<float>(event.mouseMove.x) - sliderKnob_.getRadius();
-    newPosX = std::max(
+    float newPosX{
+        static_cast<float>(event.mouseMove.x) - sliderKnob_.getRadius()};
+    newPosX{std::max(
         sliderBar_.getPosition().x,
         std::min(newPosX, sliderBar_.getPosition().x + sliderBar_.getSize().x -
-                              2 * sliderKnob_.getRadius()));
+                              2 * sliderKnob_.getRadius()))};
     sliderKnob_.setPosition(newPosX, sliderKnob_.getPosition().y);
-    value_ =
+    value_{
         minValue_ + ((newPosX - sliderBar_.getPosition().x) /
                      (sliderBar_.getSize().x - 2 * sliderKnob_.getRadius())) *
-                        (maxValue_ - minValue_);
+                        (maxValue_ - minValue_)};
   }
 }
 
