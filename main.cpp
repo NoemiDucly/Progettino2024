@@ -54,7 +54,7 @@ int main() {
 
   int n { numberOfBoids() };
 
-  for (int i = 0; i < n; ++i) {
+  for (int i{0}; i < n; ++i) {
     boids::Boid b(rand() % 800, rand() % 600, rand() % 3, rand() % 3);
     sf::CircleShape shape(5);
     shape.setPosition(static_cast<float>(b.getPosition().x_),
@@ -85,7 +85,7 @@ int main() {
 
     window.clear(sf::Color::Black);
 
-    for (long unsigned int i = 0; i < shapes.size(); ++i) {
+    for (long unsigned int i{0}; i < shapes.size(); ++i) {
       window.draw(shapes[i]);
       shapes[i].setPosition(
           static_cast<float>(flock.getBoid(i).getPosition().x_),
