@@ -106,7 +106,6 @@ TEST_CASE("Testing function Boid::alignment") {
     boids::Vec2 alignmentResult{
         centralBoid.alignment(boids, alignmentFactor, d)};
 
-    // Calcolo della velocità media attesa
     boids::Vec2 expectedVelocity(0, 0);
     for (int i = 1; i <= 30; ++i) {
       expectedVelocity += boids::Vec2(2 + i * 0.1, 2 + i * 0.1);
@@ -211,10 +210,10 @@ TEST_CASE("Testing function Boid::cohesion") {
 
     // Calcolo della posizione media attesa
     boids::Vec2 expectedCenterOfMass(0, 0);
-    for (int i = 1; i <= 10; ++i) {
-      expectedCenterOfMass += boids::Vec2(i, i);
+    for (const auto& boid : boids) {
+        expectedCenterOfMass += boid.getPosition(); 
     }
-    expectedCenterOfMass = expectedCenterOfMass / 10;
+    expectedCenterOfMass = expectedCenterOfMass / (static_cast<double>(boids.size());
 
     boids::Vec2 expectedCohesion{
         (expectedCenterOfMass - centralBoid.getPosition()) * cohesionFactor};
@@ -232,13 +231,16 @@ TEST_CASE("Testing function Boid::cohesion") {
 
     boids::Vec2 cohesionResult{centralBoid.cohesion(boids, cohesionFactor, d)};
 
-    // Calcolo della posizione media attesa
+ 
     boids::Vec2 expectedCenterOfMass(0, 0);
-    for (long unsigned int i = 1; i < boids.size(); ++i) {
-      expectedCenterOfMass += boids[i].getPosition();
-    }
-    expectedCenterOfMass =
-        expectedCenterOfMass / (static_cast<double>(boids.size()) - 1);
+    // Calcolo della posizione media attesa includendo centralBoid
+boids::Vec2 expectedCenterOfMass(0, 0);
+for (const auto& boid : boids) {
+    expectedCenterOfMass += boid.getPosition();
+}
+expectedCenterOfMass = expectedCenterOfMass / static_cast<double>(boids.size());
+
+ 
 
     boids::Vec2 expectedCohesion =
         (expectedCenterOfMass - centralBoid.getPosition()) * cohesionFactor;
