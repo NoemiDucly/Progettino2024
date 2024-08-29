@@ -57,9 +57,7 @@ double Vec2::lenght() const {
   return len;
 }
 
-// bool Vec2::operator==(const Vec2& other) const {
-//   return x_ == other.x_ && y_ == other.y_;
-// }
+
 
 void Vec2::limit(double max) {
   double module{lenght()};
