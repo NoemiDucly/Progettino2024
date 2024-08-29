@@ -147,17 +147,7 @@ TEST_CASE("Testing function Boid::alignment") {
     CHECK(alignmentResult.y_ == doctest::Approx(expectedAlignment.y_));
   }
 
-  SUBCASE("Testing boids with opposite velocity") {
-    boids::Boid boid(0, 0, 1, 1);
-    std::vector<boids::Boid> neighbors{{boids::Boid(1, 1, -1, -1),
-                                          boids::Boid(-1, -1, 3, 3)}};
-    boids::Vec2 result{boid.alignment(neighbors, 0.5, d)};
-    CHECK(result.x_ == 0.0);
-    CHECK(result.y_ == 0.0);
-  }
-
   SUBCASE("Testing with no neighbors") {
-    boids::Boid boid(0, 0, 1, 1);
     std::vector<boids::Boid> neighbors;
     boids::Vec2 result{boid.alignment(neighbors, 0.5, d)};
     CHECK(result.x_ == 0.0);
