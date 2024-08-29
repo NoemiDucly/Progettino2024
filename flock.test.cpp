@@ -11,24 +11,24 @@ TEST_CASE("Testing function Flock::calculateAverageSpeed") {
   SUBCASE(
       "Testing many boids and different speed + testing getSize "
       "function") {
-    // Case 1: no boids in the flock
+  
     CHECK(flock.getSize() == 0);
     CHECK(flock.calculateAverageSpeed() == 0.0);
 
-    // Case 2: one single flock
+   
     boids::Boid b1(0, 0, 3, 4);
     flock.addBoid(b1);
     CHECK(flock.getSize() == 1);
     CHECK(flock.calculateAverageSpeed() == 5.0);
 
-    // Case 3: we had another boid
+
     boids::Boid b2(0, 0, 6, 8);
     flock.addBoid(b2);
 
     CHECK(flock.getSize() == 2);
     CHECK(flock.calculateAverageSpeed() == 7.5);
 
-    // Case 4: we had the third flock with velocity=0
+   
     boids::Boid b3(0, 0, 0, 0);
     flock.addBoid(b3);
 
@@ -101,15 +101,15 @@ TEST_CASE("Testing function Flock::calculateSpeedStandardDeviation") {
   boids::Flock flock;
 
   SUBCASE("Testing a flock") {
-    // Case 1: empty flock
+
     CHECK(flock.calculateSpeedStandardDeviation() == 0.0);
 
-    // Case 2: one single boid
+
     boids::Boid b1(3, 4, 1, 1);
     flock.addBoid(b1);
     CHECK(flock.calculateSpeedStandardDeviation() == 0.0);
 
-    // Case 3: two boids with different speeds
+
     boids::Boid b2(10, 10, 6, 8);
 
     flock.addBoid(b2);
@@ -122,7 +122,7 @@ TEST_CASE("Testing function Flock::calculateSpeedStandardDeviation") {
     CHECK(flock.calculateSpeedStandardDeviation() ==
           doctest::Approx(expectedStdDev));
 
-    // Caso 4: three boids with different speeds
+   
     boids::Boid b3(20, 20, 1, 1);
     flock.addBoid(b3);
 
@@ -157,10 +157,10 @@ TEST_CASE("Testing function Flock::calculateDistanceStandardDeviation") {
   boids::Flock flock;
 
   SUBCASE("Testing a flock with boids added progressively") {
-    // Case 1: empty flock
+   
     CHECK(flock.calculateDistanceStandardDeviation() == 0.0);
 
-    // Due boids con la stessa posizione: deviazione standard deve essere 0.0
+   //We need to initialize each instance of Vec2 with specific values
     boids::Vec2 pos1(10, 10);
 
     flock.addBoid(boids::Boid(10, 10, 1, 1));
@@ -168,11 +168,11 @@ TEST_CASE("Testing function Flock::calculateDistanceStandardDeviation") {
 
     CHECK(flock.calculateDistanceStandardDeviation() == 0.0);
 
-    // Caso 3: Aggiungi un terzo boid con posizione diversa
+   
     boids::Vec2 pos2(20, 20);
     flock.addBoid(boids::Boid(20, 20, 1, 1));
 
-    // Calcola manualmente la deviazione standard
+    //formula for the standard deviation
     double d13{pos1.distance(pos2)};
     double d23{pos1.distance(pos2)};
     double d12{pos1.distance(pos1)};
@@ -188,11 +188,11 @@ TEST_CASE("Testing function Flock::calculateDistanceStandardDeviation") {
     CHECK(flock.calculateDistanceStandardDeviation() ==
           doctest::Approx(expectedStandardDeviation));
 
-    // Caso 4: Aggiungi un quarto boid con posizione diversa
+   
     boids::Vec2 pos3(30, 30);
     flock.addBoid(boids::Boid(30, 30, 1, 1));
 
-    // Calcola manualmente la deviazione standard
+   
     double d14{pos1.distance(pos3)};
     double d24{pos1.distance(pos3)};
     double d34{pos2.distance(pos3)};
