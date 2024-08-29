@@ -60,9 +60,9 @@ double Flock::calculateDistanceStandardDeviation() const {
   double variance {0.0};
   int count {0};
 
-  for (long unsigned int i = 0; i < flock.size(); ++i) {
-    for (long unsigned int j = i + 1; j < flock.size(); ++j) {
-      double distance = flock[i].getPosition().distance(flock[j].getPosition());
+  for (long unsigned int i{0}; i < flock.size(); ++i) {
+    for (long unsigned int j{i + 1}; j < flock.size(); ++j) {
+      double distance{flock[i].getPosition().distance(flock[j].getPosition())};
       variance += (distance - averageDistance) * (distance - averageDistance);
       count++;
     }
