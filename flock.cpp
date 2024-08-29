@@ -32,8 +32,8 @@ double Flock::calculateAverageDistance() const {
   double totalDistance {0.0};
   int count {0};
 
-  for (long unsigned int i = 0; i < flock.size(); ++i) {
-    for (long unsigned int j = i + 1; j < flock.size(); ++j) {
+  for (long unsigned int i{0}; i < flock.size(); ++i) {
+    for (long unsigned int j{i + 1}; j < flock.size(); ++j) {
       totalDistance += flock[i].getPosition().distance(flock[j].getPosition());
       count++;
     }
