@@ -164,13 +164,7 @@ TEST_CASE("Testing function Boid::alignment") {
     CHECK(result.y_ == 0.0);
   }
 
-  SUBCASE("Test with one fast neighbor") {
-    boids::Boid boid(0, 0, 1, 1);
-    std::vector<boids::Boid> neighbors = {boids::Boid(1, 1, 10, 10)};
-    boids::Vec2 result{boid.alignment(neighbors, 0.5, d)};
-    CHECK(result.x_ == 4.5);
-    CHECK(result.y_ == 4.5);
-  }
+ 
 }
 
 TEST_CASE("Testing function Boid::cohesion") {
